@@ -188,6 +188,99 @@
 				</section>
 
 				<section>
+					<section>
+						<h2>Building a Training Data Set</h2>
+						<p><img src="img/infys1.png" style="border: none" /></p>
+					</section>
+					<section>
+						<h2>Building a Training Data Set</h2>
+						<p><img src="img/infys2.png" style="border: none" /></p>
+					</section>
+					<section>
+						<h2>Building a Training Data Set</h2>
+						<p><img src="img/plot_seg.png" style="border: none" /></p>
+					</section>
+					<section>
+						<h2>Building a Training Data Set</h2>
+						<p>
+							Some initial filtering and calculations are performed:
+						</p>
+						<ul>
+							<div class="fragment"><li>Plots with 4 subplots</li></div>
+							<div class="fragment"><li>Plots closest to the mean ALOS acquisition date</li></div>
+							<div class="fragment"><li>Calculate tons/hectare from plots</li></div>
+							<div class="fragment"><li>Averaging segment means in areas of overlap</li></div>
+							<div class="fragment"><li>Simplify ecosystem type</li></div>
+						</ul>
+					</section>
+					<section>
+						<h2>Building a Training Data Set</h2>
+						<pre>
+							<code>SELECT z.folio, z.carbono_arboles_tpha, z.date_distance, 
+z.measurement_date, o.id_vegetac AS veg_type_id, o.vegetacion
+AS veg_type, CASE WHEN o.vegetacion IN ('Bosque de abies', 
+'Bosque de ayarin', 'Bosque de cedro', 'Bosque de pino', 
+'Bosque de tascate') THEN 'CF' WHEN o.vegetacion IN ('Bosque 
+de encino', 'Bosque de galerÝa') THEN 'BF' WHEN o.vegetacion
+ IN ('Bosque de encino-pino', 'Bosque de pino-encino') THEN 'CBF' 
+WHEN o.vegetacion = 'Manglar' THEN 'MG' WHEN o.vegetacion IN 
+('Bosque mesofilo de monta±a', 'Selva alta perennifolia', 'Selva 
+alta subperennifolia', 'Selva baja perennifolia', 'Selva baja 
+subperennifolia', 'Selva mediana subperennifolia') THEN 'THF' 
+WHEN o.vegetacion IN ('Selva baja caducifolia', 'Selva baja 
+espinosa', 'Selva baja subcaducifolia', 'Selva mediana 
+caducifolia', 'Selva mediana subcaducifolia') THEN 'TDF' ELSE 
+'ERROR' END AS type_code, o.ecosistema AS ecosystem, 
+AVG(s.num_pixels) AS num_pixels, AVG(s.num_masked_pixels) AS 
+num_masked_pixels, AVG(s.elev_mean) AS elev_mean, AVG(s.slope_mean) 
+AS slope_mean, AVG(s.vcf_mean) AS vcf_mean, AVG(hh_mean) AS hh_mean, 
+AVG(hv_mean) AS hv_mean, AVG(lsmask_mean) AS lsmask_mean, 
+MIN(lsmask_min) AS lsmask_min, MAX(lsmask_max) AS lsmask_max, 
+COUNT(alos_id) AS num_images FROM (SELECT b.folio, 
+SUM(b.carbono_arboles) / 0.1598925 AS carbono_arboles_tpha, 
+y.date_distance, MIN(b.levantamiento_fecha_ejecucion) AS 
+measurement_date  FROM (SELECT folio, CASE WHEN MIN(date_distance) 
++ MAX(date_distance) = 0 THEN MIN(date_distance) WHEN 
+MIN(date_distance) + MAX(date_distance) > 0 THEN 
+MIN(date_distance) ELSE MAX(date_distance) END AS date_distance 
+FROM (SELECT folio, days_from_alos AS date_distance, COUNT(sitio) 
+AS plot_count FROM mexico_biomass_plots_filtered WHERE NOT 
+carbono_arboles IS NULL AND NOT levantamiento_fecha_ejecucion 
+IS NULL AND folio IN (SELECT folio FROM mexico_biomass_plots_old) 
+AND NOT tipificacion IN ('Inaccesible (pendiente)', 'Inaccesible 
+(social)', 'Vacio', 'Planeado') GROUP BY folio, days_from_alos 
+HAVING COUNT(sitio) = 4 ORDER BY folio) AS x GROUP BY folio) AS 
+y INNER JOIN mexico_biomass_plots_filtered b ON b.folio=y.folio 
+AND b.days_from_alos=y.date_distance GROUP BY b.folio, 
+y.date_distance) AS z INNER JOIN mexico_biomass_plots_old o ON 
+z.folio=o.folio INNER JOIN mexico_biomass_plots_model_statistics 
+s ON z.folio=s.folio GROUP BY z.folio, z.carbono_arboles_tpha, 
+z.date_distance, z.measurement_date, o.id_vegetac, 
+o.vegetacion, o.ecosistema;</code>
+						</pre>
+					</section>
+				</section>
+
+				<section>
+					<h2>Now that we have training data and predictor layers</h2>
+					<div class="fragment">
+						<em><h1 style="color: red">Let's talk about modeling</h1></em>
+					</div>
+				</section>
+
+				<section>
+					<h1>Random Forest</h1>
+					<p>
+						A <em>Forest</em> of <em>decision trees</em> for classification or regression.
+					</p>
+					<div class="fragment">
+						<p>
+							The algorithm choses the mode for classification and the mean for regression.
+						</p>
+					</div>
+				</section>
+
+				<section>
 					<p>Any Questions?</o>
 				</section>
 
