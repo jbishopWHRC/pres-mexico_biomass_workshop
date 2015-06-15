@@ -68,52 +68,123 @@
 
 				<section>
 					<h1>ALOS Data</h1>
-					<section>
-						<h2>Download the data</h2>
+					<h2>Download the data</h2>
+					<p>
+						The <a href="https://www.asf.alaska.edu">Alaska Satellite Facility</a> is the source for our ALOS data.
+					</p>
+					<div class="fragment">
 						<p>
-							The <a href="https://www.asf.alaska.edu">Alaska Satellite Facility</a> is the source for our ALOS data.
+							And now the data are available for free!<sup>*</sup>
 						</p>
-						<div class="fragment">
-							<p>
-								And now the data are available for free!<sup>*</sup>
-							</p>
-						</div>
-						<div class="fragment">
-							<br></br>
-							<p>
-								<sup>*</sup>For peaceful, non-commercial work only!
-							</p>
-						</div>
+					</div>
+					<div class="fragment">
+						<br></br>
+						<p>
+							<sup>*</sup>For peaceful, non-commercial work only! You must give credit to JAXA/METI.
+						</p>
+					</div>
+				</section>
+				<section>
+					<h1>ALOS Data</h1>
+					<h2>Radar Data Processing</h2>
+					<p>
+						We use <a href="http://www.gamma-rs.ch">GAMMA</a> software to process ALOS data.
+					</p>
+				</section>
+				</section>
+				<section>
+					<h1>ALOS Data</h1>
+						<h2>What is radar?</h2>
+							<p><img src="img/radar.png" style="border: none" /></p>
+				</section>
+				<section>
+					<h1>ALOS Data</h1>
+					<p>
+						ASF is now providing <a href="https://www.asf.alaska.edu/sar-data/palsar/terrain-corrected-rtc/">Radiometrically Terrain Corrected</a> data for download.
+					</p>
+					<div class="fragment">
+						<p>
+							Now you don't have to do the radar processing yourself!
+						</p>
+					</div>
+					<div class="fragment">
+						<p>
+							They also use GAMMA and produce something very similar to what we're producing at WHRC.
+						</p>
+					</div>
+				</section>
+
+				<section>
+					<h1>ALOS Data</h1>
+					<h2>Speckle Filtering</h2>
+					<p><img src="img/spec_before.png" style="border: none" /></p>
+				</section>
+
+				<section>
+					<h1>ALOS Data</h1>
+					<h2>Speckle Filtering</h2>
+					<p><img src="img/spec_after.png" style="border: none" /></p>
+				</section>
+
+				<section>
+					<h1>ALOS Data</h1>
+					<p><img src="img/alos.png" style="border: none" /></p>
+				</section>
+
+				<section>
+					<section>
+						<h1>ALOS Data</h1>
+						<h2>Image Segmentation</h2>					
+						<p>
+							We use <a href="http://www.imageseg.com">Berkeley Image Seg</a> to segment the ALOS data.
+						</p>
 					</section>
 					<section>
-						<h2>Radar Data Processing</h2>
-						<p>
-							We use <a href="http://www.gamma-rs.ch">GAMMA</a> software to process ALOS data.
-						</p>
-						<div class="fragment">
-							Some of you may have learned about radar data processing before.
-						</div>
-						<div class="fragment">
-							A word on RTC
-						</div>
+						<p><img src="img/segments.png" style="border: none" /></p>
 					</section>
 				</section>
 
 				<section>
 					<h2>Elevation Data</h2>
+					<section>
+						<p>
+							<a href="http://www2.jpl.nasa.gov/srtm/cbanddataproducts.html">SRTM</a> Data used for elevation source
+						</p>
+						<p><img src="img/elev.png" style="border: none" /></p>
+					</section>
+					<section>
+						<p>
+							From that, we produce slope information.
+							<small><pre><code>gdaldem slope -compute_edges -of GTiff -co "COMPRESS=LZW" -co "BIGTIFF=YES" srtm_elevation.tif srtm_slope.tif</code></pre></small>
+						</p>
+						<p><img src="img/slope.png" style="border: none" /></p>
+					</section>
 				</section>
 				<section>
 					<h2>VCF Data</h2>
 					<p>
-						Hansen's <a href="http://glcf.umd.edu/data/landsatTreecover/">Landsat Tree Cover Continuous Fields</a>
+						<a href="http://glcf.umd.edu/data/landsatTreecover/">Landsat Tree Cover Continuous Fields</a>
 						<p><img src="img/vcf.png" style="border: none" /></p>
 				</section>
 
 				<section>
 					<h2>Segmentation Statistics</h2>
-					<p>
-
-					</p>
+					<section>
+						<p>
+							For each ALOS scene, we calculate the mean, standard deviation, minimum, and maximum of:
+							<ul>
+								<li>ALOS HH</li>
+								<li>ALOS HV</li>
+								<li>ALOS Layover/Shadow</li>
+								<li>SRTM Elevation</li>
+								<li>SRTM Slope</li>
+								<li>Tree Cover</li>
+							</ul>
+						</p>
+					</section>
+					<section>
+						<p><img src="img/csv.png" style="border: none" /></p>
+					</section>
 				</section>
 
 				<section>
