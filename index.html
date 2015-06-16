@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Mexico Biomass Workshop</title>
+
+		<meta name="description" content="Building a biomass map for Jesse">
+		<meta name="author" content="Jesse Bishop">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1>Biomass Mapping</h1>
+					<h3>Creating a National Map for Mexico</h3>
+					<p>
+						<small>Created by Jesse Bishop / <a href="http://twitter.com/jessebishop">@jessebishop</a> / jbishop@whrc.org</small>
+					</p>
+				</section>
+
+				<section>
+					<h2>About Me</h2>
+					<p>
+						I work at the <a href="http://www.whrc.org">Woods Hole Research Center</a>, where I study global forests using remotely sensed data. I use many tools to do this work including:
+					</p>
+					<ul>
+						<li>Postgresql/PostGIS</li>
+						<li>Python</li>
+						<li>R</li>
+					</ul>
+				</section>
+
+				<section>
+					<h1>Acquiring Data</h1>
+					<p>First, we need to start gathering some spatial data</p>
+				</section>
+
+				<section>
+					<h1>ALOS Data</h1>
+					<h2>Download the data</h2>
+					<p>
+						The <a href="https://www.asf.alaska.edu">Alaska Satellite Facility</a> is the source for our ALOS data.
+					</p>
+					<div class="fragment">
+						<p>
+							And now the data are available for free!<sup>*</sup>
+						</p>
+					</div>
+					<div class="fragment">
+						<br></br>
+						<p>
+							<sup>*</sup>For peaceful, non-commercial work only! You must give credit to JAXA/METI.
+						</p>
+					</div>
+				</section>
+				<section>
+					<h1>ALOS Data</h1>
+					<h2>Radar Data Processing</h2>
+					<p>
+						We use <a href="http://www.gamma-rs.ch">GAMMA</a> software to process ALOS data.
+					</p>
+				</section>
+				</section>
+				<section>
+					<h1>ALOS Data</h1>
+						<h2>What is radar?</h2>
+							<p><img src="img/radar.png" style="border: none" /></p>
+				</section>
+				<section>
+					<h1>ALOS Data</h1>
+					<p>
+						ASF is now providing <a href="https://www.asf.alaska.edu/sar-data/palsar/terrain-corrected-rtc/">Radiometrically Terrain Corrected</a> data for download.
+					</p>
+					<div class="fragment">
+						<p>
+							Now you don't have to do the radar processing yourself!
+						</p>
+					</div>
+					<div class="fragment">
+						<p>
+							They also use GAMMA and produce something very similar to what we're producing at WHRC.
+						</p>
+					</div>
+				</section>
+
+				<section>
+					<h1>ALOS Data</h1>
+					<h2>Speckle Filtering</h2>
+					<p><img src="img/spec_before.png" style="border: none" /></p>
+				</section>
+
+				<section>
+					<h1>ALOS Data</h1>
+					<h2>Speckle Filtering</h2>
+					<p><img src="img/spec_after.png" style="border: none" /></p>
+				</section>
+
+				<section>
+					<h1>ALOS Data</h1>
+					<p><img src="img/alos.png" style="border: none" /></p>
+				</section>
+
+				<section>
+					<section>
+						<h1>ALOS Data</h1>
+						<h2>Image Segmentation</h2>					
+						<p>
+							We use <a href="http://www.imageseg.com">Berkeley Image Seg</a> to segment the ALOS data.
+						</p>
+					</section>
+					<section>
+						<p><img src="img/segments.png" style="border: none" /></p>
+					</section>
+				</section>
+
+				<section>
+					<h2>Elevation Data</h2>
+					<section>
+						<p>
+							<a href="http://www2.jpl.nasa.gov/srtm/cbanddataproducts.html">SRTM</a> Data used for elevation source
+						</p>
+						<p><img src="img/elev.png" style="border: none" /></p>
+					</section>
+					<section>
+						<p>
+							From that, we produce slope information.
+							<small><pre><code>gdaldem slope -compute_edges -of GTiff -co "COMPRESS=LZW" -co "BIGTIFF=YES" srtm_elevation.tif srtm_slope.tif</code></pre></small>
+						</p>
+						<p><img src="img/slope.png" style="border: none" /></p>
+					</section>
+				</section>
+				<section>
+					<h2>VCF Data</h2>
+					<p>
+						<a href="http://glcf.umd.edu/data/landsatTreecover/">Landsat Tree Cover Continuous Fields</a>
+						<p><img src="img/vcf.png" style="border: none" /></p>
+				</section>
+
+				<section>
+					<h2>Segmentation Statistics</h2>
+					<section>
+						<p>
+							For each ALOS scene, we calculate the mean, standard deviation, minimum, and maximum of:
+							<ul>
+								<li>ALOS HH</li>
+								<li>ALOS HV</li>
+								<li>ALOS Layover/Shadow</li>
+								<li>SRTM Elevation</li>
+								<li>SRTM Slope</li>
+								<li>Tree Cover</li>
+							</ul>
+						</p>
+					</section>
+					<section>
+						<p><img src="img/csv.png" style="border: none" /></p>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Building a Training Data Set</h2>
+						<p><img src="img/infys1.png" style="border: none" /></p>
+					</section>
+					<section>
+						<h2>Building a Training Data Set</h2>
+						<p><img src="img/infys2.png" style="border: none" /></p>
+					</section>
+					<section>
+						<h2>Building a Training Data Set</h2>
+						<p><img src="img/plot_seg.png" style="border: none" /></p>
+					</section>
+					<section>
+						<h2>Building a Training Data Set</h2>
+						<p>
+							Some initial filtering and calculations are performed:
+						</p>
+						<ul>
+							<div class="fragment"><li>Plots with 4 subplots</li></div>
+							<div class="fragment"><li>Plots closest to the mean ALOS acquisition date</li></div>
+							<div class="fragment"><li>Calculate tons/hectare from plots</li></div>
+							<div class="fragment"><li>Averaging segment means in areas of overlap</li></div>
+							<div class="fragment"><li>Simplify ecosystem type</li></div>
+						</ul>
+					</section>
+					<section>
+						<h2>Building a Training Data Set</h2>
+						<pre>
+							<code>SELECT z.folio, z.carbono_arboles_tpha, z.date_distance, 
+z.measurement_date, o.id_vegetac AS veg_type_id, o.vegetacion
+AS veg_type, CASE WHEN o.vegetacion IN ('Bosque de abies', 
+'Bosque de ayarin', 'Bosque de cedro', 'Bosque de pino', 
+'Bosque de tascate') THEN 'CF' WHEN o.vegetacion IN ('Bosque 
+de encino', 'Bosque de galerÝa') THEN 'BF' WHEN o.vegetacion
+ IN ('Bosque de encino-pino', 'Bosque de pino-encino') THEN 'CBF' 
+WHEN o.vegetacion = 'Manglar' THEN 'MG' WHEN o.vegetacion IN 
+('Bosque mesofilo de monta±a', 'Selva alta perennifolia', 'Selva 
+alta subperennifolia', 'Selva baja perennifolia', 'Selva baja 
+subperennifolia', 'Selva mediana subperennifolia') THEN 'THF' 
+WHEN o.vegetacion IN ('Selva baja caducifolia', 'Selva baja 
+espinosa', 'Selva baja subcaducifolia', 'Selva mediana 
+caducifolia', 'Selva mediana subcaducifolia') THEN 'TDF' ELSE 
+'ERROR' END AS type_code, o.ecosistema AS ecosystem, 
+AVG(s.num_pixels) AS num_pixels, AVG(s.num_masked_pixels) AS 
+num_masked_pixels, AVG(s.elev_mean) AS elev_mean, AVG(s.slope_mean) 
+AS slope_mean, AVG(s.vcf_mean) AS vcf_mean, AVG(hh_mean) AS hh_mean, 
+AVG(hv_mean) AS hv_mean, AVG(lsmask_mean) AS lsmask_mean, 
+MIN(lsmask_min) AS lsmask_min, MAX(lsmask_max) AS lsmask_max, 
+COUNT(alos_id) AS num_images FROM (SELECT b.folio, 
+SUM(b.carbono_arboles) / 0.1598925 AS carbono_arboles_tpha, 
+y.date_distance, MIN(b.levantamiento_fecha_ejecucion) AS 
+measurement_date  FROM (SELECT folio, CASE WHEN MIN(date_distance) 
++ MAX(date_distance) = 0 THEN MIN(date_distance) WHEN 
+MIN(date_distance) + MAX(date_distance) > 0 THEN 
+MIN(date_distance) ELSE MAX(date_distance) END AS date_distance 
+FROM (SELECT folio, days_from_alos AS date_distance, COUNT(sitio) 
+AS plot_count FROM mexico_biomass_plots_filtered WHERE NOT 
+carbono_arboles IS NULL AND NOT levantamiento_fecha_ejecucion 
+IS NULL AND folio IN (SELECT folio FROM mexico_biomass_plots_old) 
+AND NOT tipificacion IN ('Inaccesible (pendiente)', 'Inaccesible 
+(social)', 'Vacio', 'Planeado') GROUP BY folio, days_from_alos 
+HAVING COUNT(sitio) = 4 ORDER BY folio) AS x GROUP BY folio) AS 
+y INNER JOIN mexico_biomass_plots_filtered b ON b.folio=y.folio 
+AND b.days_from_alos=y.date_distance GROUP BY b.folio, 
+y.date_distance) AS z INNER JOIN mexico_biomass_plots_old o ON 
+z.folio=o.folio INNER JOIN mexico_biomass_plots_model_statistics 
+s ON z.folio=s.folio GROUP BY z.folio, z.carbono_arboles_tpha, 
+z.date_distance, z.measurement_date, o.id_vegetac, 
+o.vegetacion, o.ecosistema;</code>
+						</pre>
+					</section>
+				</section>
+
+				<section>
+					<h2>Now that we have training data and predictor layers</h2>
+					<div class="fragment">
+						<em><h1 style="color: red">Let's talk about modeling</h1></em>
+					</div>
+				</section>
+
+				<section>
+					<section>
+						<h1><a href="https://en.wikipedia.org/wiki/Random_forest">Random Forest</a></h1>
+						<p>
+							A <em>Forest</em> of <em>decision trees</em> for classification or regression.
+						</p>
+						<div class="fragment">
+							<p>
+								The algorithm choses the mode for classification and the mean for regression.
+							</p>
+						</div>
+						<div class="fragment">
+							<p>
+								Non-parametric: no need for <em>a priori</em> information about the data distribution.
+							</p>
+						</div>
+					</section>
+					<section>
+						<h1>Random Forest</h1>
+						<p><img src="img/rf.png" style="border: none" /></p>
+					</section>
+				</section>
+
+				<section>
+					<h1>Model Development</h1>
+				</section>
+
+				<section>
+					<h1>Predicting Carbon</h1>
+				</section>
+
+				<section>
+					<h1>Building a Mosaic</h1>
+				</section>
+
+				<section>
+					<p>Any Questions?</o>
+				</section>
+
+				
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
