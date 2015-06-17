@@ -14,7 +14,7 @@ library(sampling)
 # Set your working directory and read the training data csv
 setwd('/Users/jbishop/Documents/Projects/858_MREDD/Workshops/201506_Biomass_CONAFOR/mexico_biomass_modeling')
 d <- read.csv('workshop_training_data.csv')
-dim[d]
+dim(d)
 
 # Plot at the relationships
 plot(d$carbono_arboles_tpha, d$hv_mean)
@@ -22,10 +22,10 @@ plot(d$carbono_arboles_tpha, d$vcf_mean)
 
 ## Data Filtering
 # Remove plots with steep slopes
-sub <- subset(sub, slope_mean < 15) # degrees (or 15%)
+sub <- subset(d, slope_mean < 15) # degrees (or 15%)
 dim(sub)[1]
 # Remove plots with layover/shadow
-sub <- subset(sub, lsmask_mean = 0)
+sub <- subset(sub, lsmask_mean == 0)
 dim(sub)[1]
 # Remove plots with 0 carbon
 sub <- subset(sub, carbono_arboles_tpha != 0)
